@@ -2,6 +2,7 @@ import subprocess
 
 from instructor import OpenAISchema
 from pydantic import Field
+from security import safe_command
 
 
 class Function(OpenAISchema):
@@ -20,8 +21,7 @@ class Function(OpenAISchema):
 
     @classmethod
     def execute(cls, shell_command: str) -> str:
-        process = subprocess.Popen(
-            shell_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        process = safe_command.run(subprocess.Popen, shell_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
         )
         output, _ = process.communicate()
         exit_code = process.returncode
