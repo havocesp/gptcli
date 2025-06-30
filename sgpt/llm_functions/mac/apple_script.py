@@ -2,6 +2,7 @@ import subprocess
 
 from instructor import OpenAISchema
 from pydantic import Field
+from security import safe_command
 
 
 class Function(OpenAISchema):
@@ -23,8 +24,7 @@ class Function(OpenAISchema):
     def execute(cls, apple_script):
         script_command = ["osascript", "-e", apple_script]
         try:
-            process = subprocess.Popen(
-                script_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            process = safe_command.run(subprocess.Popen, script_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE
             )
             output, _ = process.communicate()
             output = output.decode("utf-8").strip()
